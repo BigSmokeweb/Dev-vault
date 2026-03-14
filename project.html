@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Project — DevVault</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.detail-back{padding:1rem 2.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;}
+.back-btn{background:none;border:none;cursor:pointer;font-size:.88rem;color:var(--ink3);font-family:var(--font-body);display:flex;align-items:center;gap:.4rem;transition:color .15s;text-decoration:none;}
+.back-btn:hover{color:var(--coral);}
+.detail-inner{padding:3rem 2.5rem;display:grid;grid-template-columns:1fr 380px;gap:3rem;max-width:1280px;margin:0 auto;align-items:start;}
+.detail-thumb{height:340px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);margin-bottom:1.5rem;}
+.detail-thumb img{width:100%;height:100%;object-fit:cover;}
+.detail-title{font-family:var(--font-display);font-size:2.5rem;font-weight:700;letter-spacing:-1px;margin-bottom:.75rem;}
+.detail-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
+.detail-desc{font-size:.95rem;color:var(--ink3);line-height:1.75;margin-bottom:1.5rem;}
+.detail-meta{display:flex;align-items:center;gap:1.5rem;padding:1rem 0;border-top:1px solid var(--border);}
+.detail-meta-item{display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--ink3);}
+.sidebar{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);position:sticky;top:80px;}
+.sb-head{padding:1.5rem;border-bottom:1px solid var(--border);}
+.sb-author{display:flex;align-items:center;gap:.8rem;margin-bottom:.75rem;}
+.sb-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:white;}
+.sb-name{font-weight:700;font-size:.95rem;}
+.sb-role{font-size:.75rem;color:var(--muted);font-family:var(--font-mono);}
+.sb-stats{display:flex;gap:1rem;}
+.sb-stat{text-align:center;}
+.sb-stat-n{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--coral);}
+.sb-stat-l{font-size:.68rem;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;}
+.sb-actions{padding:1.25rem;display:flex;flex-direction:column;gap:.6rem;}
+.sb-btn{width:100%;padding:.75rem;border-radius:var(--radius-sm);font-size:.88rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all .18s;display:flex;align-items:center;justify-content:center;gap:.4rem;border:none;}
+.sb-btn-primary{background:var(--coral);color:white;}
+.sb-btn-primary:hover{background:var(--coral2);}
+.sb-btn-secondary{background:var(--cream);color:var(--ink);border:1.5px solid var(--border)!important;}
+.sb-btn-secondary:hover{border-color:var(--coral)!important;color:var(--coral);}
+@media(max-width:900px){.detail-inner{grid-template-columns:1fr;}.sidebar{position:static;}}
+</style>
+</head>
+<body>
+<div class="toast-area" id="toastArea"></div>
+<nav class="navbar" id="mainNav"></nav>
+<div class="detail-back"><a class="back-btn" href="explore.html">← Back to Explore</a><span style="color:var(--muted);font-size:.82rem" id="breadcrumb"></span></div>
+<div class="detail-inner">
+  <div>
+    <div class="detail-thumb" id="dThumb"></div>
+    <div class="detail-tags" id="dTags"></div>
+    <h1 class="detail-title" id="dTitle"></h1>
+    <p class="detail-desc" id="dDesc"></p>
+    <div class="detail-meta" id="dMeta"></div>
+  </div>
+  <div class="sidebar">
+    <div class="sb-head"><div class="sb-author" id="sbAuthor"></div><div class="sb-stats" id="sbStats"></div></div>
+    <div class="sb-actions">
+      <button class="sb-btn sb-btn-primary" id="dlBtn">⬇ Download Project</button>
+      <button class="sb-btn sb-btn-secondary" id="likeBtn">♡ Like this project</button>
+      <button class="sb-btn sb-btn-secondary" onclick="showToast('Link copied!','success')">🔗 Share</button>
+    </div>
+  </div>
+</div>
+<div id="footer"></div>
+<script src="js/data.js"></script>
+<script>
+renderNavbar('explore');
+renderFooter('footer');
+const id = parseInt(new URLSearchParams(location.search).get('id'));
+const p = getProjects().find(x=>x.id===id);
+if (!p) { document.querySelector('.detail-inner').innerHTML='<p style="padding:3rem;color:var(--muted);font-family:var(--font-mono)">// Project not found.</p>'; }
+else {
+  document.title = p.title + ' — DevVault';
+  document.getElementById('breadcrumb').textContent = '/ ' + p.title;
+  document.getElementById('dThumb').innerHTML = `<img src="${p.img}" alt="${p.title}">`;
+  document.getElementById('dTags').innerHTML = p.tags.map(t=>`<span class="tag ${tagStyle(t)}">${t}</span>`).join('') + `<span class="tag tag-default">${diffBadge(p.difficulty)}</span>`;
+  document.getElementById('dTitle').textContent = p.title;
+  document.getElementById('dDesc').textContent = p.desc + ' This project is a great reference for students building something similar. Download it, study the code, and make it your own.';
+  document.getElementById('dMeta').innerHTML = `<div class="detail-meta-item">♥ <strong>${p.likes}</strong> likes</div><div class="detail-meta-item">⬇ <strong>${Math.floor(p.likes*2.3)}</strong> downloads</div><div class="detail-meta-item">👁️ <strong>${Math.floor(p.likes*8)}</strong> views</div>`;
+  const avColor = COLORS[p.id%COLORS.length];
+  const initials = p.author.split(' ').map(w=>w[0]).join('').slice(0,2);
+  document.getElementById('sbAuthor').innerHTML = `<div class="sb-avatar" style="background:${avColor}">${initials}</div><div><div class="sb-name">${p.author}</div><div class="sb-role">// Student Developer</div></div>`;
+  document.getElementById('sbStats').innerHTML = `<div class="sb-stat"><div class="sb-stat-n">${p.likes}</div><div class="sb-stat-l">Likes</div></div><div class="sb-stat"><div class="sb-stat-n">${Math.floor(p.likes*2.3)}</div><div class="sb-stat-l">Downloads</div></div><div class="sb-stat"><div class="sb-stat-n">${getProjects().filter(x=>x.author===p.author).length}</div><div class="sb-stat-l">Projects</div></div>`;
+  document.getElementById('dlBtn').onclick = () => fakeDownload(p.title);
+  const lb = document.getElementById('likeBtn');
+  const liked = getLiked();
+  lb.textContent = liked.has(p.id) ? '♥ Liked!' : '♡ Like this project';
+  lb.onclick = () => {
+    const l = getLiked();
+    if (l.has(p.id)) { l.delete(p.id); p.likes--; lb.textContent='♡ Like this project'; }
+    else { l.add(p.id); p.likes++; lb.textContent='♥ Liked!'; showToast('Added to your likes ♥','success'); }
+    saveLiked(l);
+    document.querySelector('#dMeta strong').textContent = p.likes;
+  };
+}
+</script>
+</body>
+</html>

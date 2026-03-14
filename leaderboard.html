@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Leaderboard — DevVault</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.lb-hero{background:linear-gradient(135deg,#fff5f0,#fef9f0);border-bottom:1.5px solid var(--border);padding:3rem 2.5rem 2.5rem;}
+.lb-title{font-family:var(--font-display);font-size:3.5rem;font-weight:700;letter-spacing:-1px;margin-bottom:.5rem;}
+.lb-title span{color:var(--coral);font-style:italic;}
+.lb-sub{font-size:.95rem;color:var(--ink3);}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:1rem;padding:2rem 2.5rem;}
+.podium-item{text-align:center;}
+.podium-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.5rem 1rem;box-shadow:var(--shadow);transition:transform .2s;min-width:140px;}
+.podium-card:hover{transform:translateY(-4px);}
+.p1{border-color:#FBBF24;}
+.podium-rank{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin:0 auto .75rem;}
+.r1{background:#FFF0C2;} .r2{background:#F0F0F0;} .r3{background:#FFEEE0;}
+.podium-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:white;margin:0 auto .5rem;}
+.podium-name{font-weight:700;font-size:.95rem;margin-bottom:.25rem;}
+.podium-stat{font-family:var(--font-mono);font-size:.72rem;color:var(--coral);}
+.lb-list{padding:1rem 2.5rem 3rem;max-width:800px;}
+.lb-row{display:flex;align-items:center;gap:1.2rem;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:.75rem;transition:all .18s;}
+.lb-row:hover{border-color:var(--coral);transform:translateX(4px);}
+.lb-pos{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--muted);width:2rem;text-align:center;}
+.lb-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:white;flex-shrink:0;}
+.lb-info{flex:1;}
+.lb-name{font-weight:700;font-size:.95rem;}
+.lb-meta{font-size:.78rem;color:var(--muted);font-family:var(--font-mono);}
+.lb-score{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--coral);}
+</style>
+</head>
+<body>
+<div class="toast-area" id="toastArea"></div>
+<nav class="navbar" id="mainNav"></nav>
+<div class="lb-hero"><div class="lb-title">Top <span>Creators</span></div><p class="lb-sub">Developers ranked by total likes on their projects.</p></div>
+<div class="podium" id="podium"></div>
+<div class="lb-list" id="lbList"></div>
+<div id="footer"></div>
+<script src="js/data.js"></script>
+<script>
+renderNavbar('leaderboard');
+renderFooter('footer');
+const map={};
+getProjects().forEach(p=>{if(!map[p.author])map[p.author]={name:p.author,likes:0,projects:0};map[p.author].likes+=p.likes;map[p.author].projects++;});
+const sorted=Object.values(map).sort((a,b)=>b.likes-a.likes);
+const top3=sorted.slice(0,3);
+const order=[top3[1],top3[0],top3[2]];
+document.getElementById('podium').innerHTML=order.map((p,i)=>{
+  const rank=i===1?1:i===0?2:3;
+  const avColor=COLORS[sorted.indexOf(p)%COLORS.length];
+  const initials=p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+  return `<div class="podium-item" style="padding-bottom:${i===1?0:rank===2?40:20}px">
+    <div class="podium-card${rank===1?' p1':''}">
+      <div class="podium-rank r${rank}">${rank===1?'🥇':rank===2?'🥈':'🥉'}</div>
+      <div class="podium-av" style="background:${avColor}">${initials}</div>
+      <div class="podium-name">${p.name}</div>
+      <div class="podium-stat">♥ ${p.likes} likes</div>
+      <div style="font-size:.72rem;color:var(--muted);font-family:var(--font-mono);margin-top:.2rem">${p.projects} projects</div>
+    </div>
+  </div>`;}).join('');
+document.getElementById('lbList').innerHTML=sorted.slice(3).map((p,i)=>{
+  const avColor=COLORS[(i+3)%COLORS.length];
+  const initials=p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+  return `<div class="lb-row"><div class="lb-pos">${i+4}</div><div class="lb-av" style="background:${avColor}">${initials}</div><div class="lb-info"><div class="lb-name">${p.name}</div><div class="lb-meta">${p.projects} project${p.projects>1?'s':''}</div></div><div class="lb-score">♥ ${p.likes}</div></div>`;}).join('');
+</script>
+</body>
+</html>

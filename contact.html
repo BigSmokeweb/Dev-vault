@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Contact — DevVault</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.contact-hero{padding:4rem 2.5rem 3rem;background:linear-gradient(135deg,#eff6ff,#fdf8f2);border-bottom:1.5px solid var(--border);}
+.contact-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);font-weight:700;letter-spacing:-1px;margin-bottom:.75rem;}
+.contact-title span{color:var(--sky);font-style:italic;}
+.contact-inner{max-width:1280px;margin:0 auto;padding:3rem 2.5rem 5rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.form-card{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:2.5rem;box-shadow:var(--shadow);}
+.form-card-title{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:.4rem;}
+.form-card-sub{font-size:.85rem;color:var(--muted);margin-bottom:2rem;}
+.form-submit{width:100%;padding:.9rem;background:var(--sky);color:white;border:none;border-radius:var(--radius-sm);font-size:.95rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all .2s;margin-top:.5rem;}
+.form-submit:hover{background:var(--sky2);transform:translateY(-1px);}
+.info-title{font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:.5rem;}
+.info-sub{font-size:.9rem;color:var(--ink3);line-height:1.7;margin-bottom:1.5rem;}
+.info-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow-sm);margin-bottom:.75rem;transition:all .2s;}
+.info-card:hover{border-color:var(--sky);transform:translateX(4px);}
+.info-icon{width:44px;height:44px;border-radius:12px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.info-lbl{font-size:.75rem;color:var(--muted);font-family:var(--font-mono);}
+.info-val{font-weight:600;font-size:.9rem;}
+.members-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:1.25rem;}
+.member-chip{background:var(--cream);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;}
+.mc-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:white;flex-shrink:0;}
+.mc-name{font-weight:600;font-size:.82rem;}
+.mc-role{font-size:.7rem;color:var(--muted);font-family:var(--font-mono);}
+@media(max-width:900px){.contact-inner{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="toast-area" id="toastArea"></div>
+<nav class="navbar" id="mainNav"></nav>
+<div class="contact-hero">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="section-kicker" style="color:var(--sky)">// We'd love to hear from you</div>
+    <div class="contact-title">Get in <span>Touch</span></div>
+    <p style="font-size:1rem;color:var(--ink3);max-width:500px;line-height:1.7">Got a question, found a bug, or want to say hi? We're four students who actually read our messages. Reach out anytime.</p>
+  </div>
+</div>
+<div class="contact-inner">
+  <div class="form-card">
+    <div class="form-card-title">Send us a message</div>
+    <div class="form-card-sub">We'll get back within 24 hours! 📩</div>
+    <div class="form-group"><label class="field-label">Your Name</label><input class="field-input" placeholder="Rahul Sharma"></div>
+    <div class="form-group"><label class="field-label">Email</label><input class="field-input" placeholder="you@example.com" type="email"></div>
+    <div class="form-group"><label class="field-label">Subject</label><select class="field-input"><option>General Question</option><option>Bug Report</option><option>Feature Request</option><option>Collaboration</option><option>Just saying hi! 👋</option></select></div>
+    <div class="form-group"><label class="field-label">Message</label><textarea class="field-input" rows="5" placeholder="Type your message here..."></textarea></div>
+    <button class="form-submit" onclick="showToast('Message sent! We\'ll reply soon 📩','success')">Send Message →</button>
+  </div>
+  <div>
+    <div class="info-title">Contact the Team</div>
+    <p class="info-sub">We're students at SIES Graduate School of Technology, Navi Mumbai. DevVault is our passion project — your feedback makes it better!</p>
+    <div class="info-card"><div class="info-icon">📧</div><div><div class="info-lbl">Email</div><div class="info-val">devvault@siesgst.ac.in</div></div></div>
+    <div class="info-card"><div class="info-icon">🏫</div><div><div class="info-lbl">College</div><div class="info-val">SIES Graduate School of Technology, Nerul, Navi Mumbai</div></div></div>
+    <div class="info-card"><div class="info-icon">💻</div><div><div class="info-lbl">GitHub</div><div class="info-val">github.com/devvault-siesgst</div></div></div>
+    <div style="font-family:var(--font-mono);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:1.25rem 0 .75rem">// The 4-person team</div>
+    <div class="members-grid" id="membersGrid"></div>
+  </div>
+</div>
+<div id="footer"></div>
+<script src="js/data.js"></script>
+<script>
+renderNavbar('');
+renderFooter('footer');
+document.getElementById('membersGrid').innerHTML=TEAM_DATA.map(m=>`
+  <div class="member-chip">
+    <div class="mc-av" style="background:${m.color}">${m.name[0]}</div>
+    <div><div class="mc-name">${m.name}</div><div class="mc-role">${m.role}</div></div>
+  </div>`).join('');
+</script>
+</body>
+</html>

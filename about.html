@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>About — DevVault</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.about-hero{padding:5rem 2.5rem;background:linear-gradient(160deg,#fff8f5 0%,#fdf8f2 60%,#f0f8ff 100%);border-bottom:1.5px solid var(--border);}
+.about-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+.about-kicker{font-family:var(--font-mono);font-size:.7rem;color:var(--coral);text-transform:uppercase;letter-spacing:2px;margin-bottom:.75rem;}
+.about-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:700;letter-spacing:-1.5px;line-height:1.05;margin-bottom:1.5rem;}
+.about-title em{color:var(--coral);font-style:italic;}
+.about-body{font-size:1rem;color:var(--ink3);line-height:1.8;margin-bottom:1.2rem;}
+.about-values{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;}
+.value-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow-sm);transition:all .2s;}
+.value-card:hover{border-color:var(--coral);transform:translateY(-2px);}
+.value-icon{font-size:1.8rem;margin-bottom:.5rem;}
+.value-title{font-weight:700;font-size:.9rem;margin-bottom:.3rem;}
+.value-desc{font-size:.8rem;color:var(--ink3);line-height:1.6;}
+.about-visual{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:2.5rem;box-shadow:var(--shadow);}
+.afl{list-style:none;}
+.afl li{display:flex;align-items:center;gap:.75rem;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:.88rem;font-weight:500;}
+.afl li:last-child{border-bottom:none;}
+.afl-check{color:var(--mint);}
+/* TEAM */
+.team-section{padding:5rem 2.5rem;background:var(--white);border-top:1.5px solid var(--border);}
+.team-inner{max-width:1280px;margin:0 auto;}
+.team-headline{font-family:var(--font-display);font-size:2.8rem;font-weight:700;letter-spacing:-1px;margin-bottom:.5rem;}
+.team-headline em{color:var(--coral);font-style:italic;}
+.team-subline{font-size:1rem;color:var(--ink3);max-width:500px;line-height:1.7;margin-bottom:3rem;}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;}
+.team-card{background:var(--cream);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;transition:all .25s;}
+.team-card:hover{border-color:var(--coral);transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+.team-card-top{height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;}
+.team-card-badge{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:100px;padding:.3rem .8rem;font-size:.72rem;font-weight:600;font-family:var(--font-mono);}
+.team-card-body{padding:1.5rem;}
+.team-card-name{font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin-bottom:.2rem;letter-spacing:-.3px;}
+.team-card-role{font-family:var(--font-mono);font-size:.72rem;color:var(--coral);text-transform:uppercase;letter-spacing:1px;margin-bottom:.75rem;}
+.team-card-bio{font-size:.82rem;color:var(--ink3);line-height:1.65;}
+.team-card-skills{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.75rem;}
+.team-card-fun{margin-top:.75rem;font-size:.72rem;color:var(--muted);font-style:italic;font-family:var(--font-mono);}
+.college-banner{background:linear-gradient(135deg,var(--coral),var(--amber));border-radius:16px;padding:2rem 2.5rem;margin-top:3rem;display:flex;align-items:center;gap:2rem;color:white;}
+.cb-icon{font-size:3rem;flex-shrink:0;}
+.cb-name{font-family:var(--font-display);font-size:1.6rem;font-weight:700;letter-spacing:-.3px;}
+.cb-sub{font-size:.88rem;opacity:.85;margin-top:.25rem;}
+.cb-badge{margin-left:auto;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);border-radius:100px;padding:.4rem 1rem;font-family:var(--font-mono);font-size:.75rem;white-space:nowrap;}
+@media(max-width:900px){.about-inner{grid-template-columns:1fr;}.team-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.team-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="toast-area" id="toastArea"></div>
+<nav class="navbar" id="mainNav"></nav>
+
+<div class="about-hero">
+  <div class="about-inner">
+    <div>
+      <div class="about-kicker">// Our story</div>
+      <h1 class="about-title">Made for<br>builders &<br><em>dreamers.</em></h1>
+      <p class="about-body">DevVault was born in the classrooms of <strong>SIES Graduate School of Technology</strong>. We're a group of four second-year students who wanted to create a dedicated space for student projects — a place where your work gets seen, appreciated, and used as a stepping stone by those who come after you.</p>
+      <p class="about-body">Whether it's a todo app or a full-stack chat application — every project you build tells a story. DevVault makes sure that story reaches the right people.</p>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem;">
+        <a class="btn-coral" href="explore.html">Explore Projects</a>
+        <a class="btn-outline" href="upload.html">Share Yours</a>
+      </div>
+      <div class="about-values">
+        <div class="value-card"><div class="value-icon">🔓</div><div class="value-title">Open & Free</div><div class="value-desc">No paywalls. Browse every project freely, always.</div></div>
+        <div class="value-card"><div class="value-icon">🌱</div><div class="value-title">Learn First</div><div class="value-desc">Projects come with descriptions so you understand the how and why.</div></div>
+        <div class="value-card"><div class="value-icon">🤝</div><div class="value-title">Community</div><div class="value-desc">Connect with developers at your level. Grow together.</div></div>
+        <div class="value-card"><div class="value-icon">🏗️</div><div class="value-title">Build Together</div><div class="value-desc">Use projects as starting points. Collaboration over competition.</div></div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <div style="font-size:3rem;margin-bottom:1rem;text-align:center">🚀</div>
+      <p style="font-family:var(--font-mono);font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:1rem">// platform features</p>
+      <ul class="afl">
+        <li><span class="afl-check">✓</span>Upload & share your projects</li>
+        <li><span class="afl-check">✓</span>Browse by technology stack</li>
+        <li><span class="afl-check">✓</span>Like & bookmark projects</li>
+        <li><span class="afl-check">✓</span>Download project files</li>
+        <li><span class="afl-check">✓</span>Creator leaderboard</li>
+        <li><span class="afl-check">✓</span>Personal profile & portfolio</li>
+        <li><span class="afl-check">✓</span>Search & filter system</li>
+        <li><span class="afl-check">✓</span>Blog & tutorials section</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="team-section">
+  <div class="team-inner">
+    <div class="section-kicker">// The people behind DevVault</div>
+    <h2 class="team-headline">Meet the <em>Team</em></h2>
+    <p class="team-subline">Four second-year students from SIES GST who turned a class idea into a real platform. Say hi! 👋</p>
+    <div class="team-grid" id="teamGrid"></div>
+    <div class="college-banner">
+      <div class="cb-icon">🎓</div>
+      <div><div class="cb-name">SIES Graduate School of Technology</div><div class="cb-sub">Nerul, Navi Mumbai · Department of Computer Engineering</div></div>
+      <div class="cb-badge">2nd Year · 2024–25</div>
+    </div>
+  </div>
+</div>
+
+<div id="footer"></div>
+<script src="js/data.js"></script>
+<script>
+renderNavbar('about');
+renderFooter('footer');
+document.getElementById('teamGrid').innerHTML = TEAM_DATA.map(m=>`
+  <div class="team-card">
+    <div class="team-card-top" style="background:linear-gradient(135deg,${m.color}18,${m.color}08)">
+      <span>${m.emoji}</span>
+      <div class="team-card-badge" style="color:${m.color}">${m.role}</div>
+    </div>
+    <div class="team-card-body">
+      <div class="team-card-name">${m.name}</div>
+      <div class="team-card-role">${m.role}</div>
+      <div class="team-card-bio">${m.bio}</div>
+      <div class="team-card-skills">${m.skills.map(s=>`<span class="tag tag-default">${s}</span>`).join('')}</div>
+      <div class="team-card-fun">"${m.fun}"</div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>

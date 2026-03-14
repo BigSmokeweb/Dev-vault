@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Explore — DevVault</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.explore-hero{background:var(--white);border-bottom:1.5px solid var(--border);padding:3rem 2.5rem 2rem;}
+.explore-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);font-weight:700;letter-spacing:-1px;margin-bottom:1.5rem;}
+.explore-title span{color:var(--coral);font-style:italic;}
+.search-box{display:flex;align-items:center;background:var(--cream);border:1.5px solid var(--border);border-radius:100px;padding:.6rem .6rem .6rem 1.4rem;max-width:560px;gap:.5rem;transition:border-color .18s;}
+.search-box:focus-within{border-color:var(--coral);}
+.search-box input{flex:1;background:none;border:none;outline:none;font-size:.9rem;font-family:var(--font-body);color:var(--ink);}
+.search-box input::placeholder{color:var(--muted);}
+.search-btn{background:var(--coral);color:white;border:none;border-radius:100px;padding:.5rem 1.2rem;font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--font-body);}
+.filter-bar{padding:1.25rem 2.5rem;border-bottom:1.5px solid var(--border);display:flex;gap:.5rem;flex-wrap:wrap;background:var(--cream);}
+.filter-chip{font-family:var(--font-mono);font-size:.72rem;padding:.35rem .9rem;border-radius:100px;border:1.5px solid var(--border);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.5px;}
+.filter-chip:hover,.filter-chip.active{background:var(--coral);color:white;border-color:var(--coral);}
+.sort-row{padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;}
+.result-count{font-size:.85rem;color:var(--muted);}
+.sort-select{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.4rem .8rem;font-size:.82rem;font-family:var(--font-body);color:var(--ink);outline:none;cursor:pointer;}
+.explore-grid{padding:1.5rem 2.5rem 3rem;}
+</style>
+</head>
+<body>
+<div class="toast-area" id="toastArea"></div>
+<nav class="navbar" id="mainNav"></nav>
+
+<div class="explore-hero">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="explore-title">Explore <span>Projects</span></div>
+    <div class="search-box"><input id="searchInput" placeholder="Search by title, tech, or author…" oninput="filter()"><button class="search-btn">Search</button></div>
+  </div>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <span class="filter-chip active" data-f="all">All</span>
+  <span class="filter-chip" data-f="HTML">HTML</span>
+  <span class="filter-chip" data-f="CSS">CSS</span>
+  <span class="filter-chip" data-f="JavaScript">JavaScript</span>
+  <span class="filter-chip" data-f="Firebase">Firebase</span>
+  <span class="filter-chip" data-f="API">API</span>
+  <span class="filter-chip" data-f="Canvas">Canvas</span>
+  <span class="filter-chip" data-f="Node.js">Node.js</span>
+  <span class="filter-chip" data-f="Beginner">🟢 Beginner</span>
+  <span class="filter-chip" data-f="Intermediate">🟡 Intermediate</span>
+  <span class="filter-chip" data-f="Advanced">🔴 Advanced</span>
+</div>
+
+<div class="sort-row">
+  <span class="result-count" id="resultCount"></span>
+  <select class="sort-select" id="sortSel" onchange="filter()"><option value="popular">Most Liked</option><option value="newest">Newest First</option><option value="oldest">Oldest First</option></select>
+</div>
+
+<div class="explore-grid">
+  <div class="grid-3" id="exploreGrid"></div>
+  <div id="noResults" style="display:none;text-align:center;padding:4rem;color:var(--muted);font-family:var(--font-mono)">// no results found — try a different search or filter</div>
+</div>
+
+<div id="footer"></div>
+
+<script src="js/data.js"></script>
+<script>
+renderNavbar('explore');
+renderFooter('footer');
+
+let activeFilter = 'all';
+const params = new URLSearchParams(location.search);
+if (params.get('tag')) { activeFilter = params.get('tag'); }
+
+// set active chip from URL param
+document.querySelectorAll('.filter-chip').forEach(c => {
+  c.classList.toggle('active', c.dataset.f === activeFilter);
+  c.onclick = () => {
+    document.querySelectorAll('.filter-chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); activeFilter = c.dataset.f; filter();
+  };
+});
+
+function filter() {
+  let list = getProjects();
+  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  if (activeFilter !== 'all') list = list.filter(p=>p.tags.includes(activeFilter)||p.difficulty===activeFilter);
+  if (q) list = list.filter(p=>p.title.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||p.author.toLowerCase().includes(q)||p.tags.some(t=>t.toLowerCase().includes(q)));
+  const sort = document.getElementById('sortSel').value;
+  if (sort==='popular') list.sort((a,b)=>b.likes-a.likes);
+  else if (sort==='newest') list.sort((a,b)=>b.id-a.id);
+  else list.sort((a,b)=>a.id-b.id);
+  const grid = document.getElementById('exploreGrid'), no = document.getElementById('noResults');
+  document.getElementById('resultCount').textContent = `${list.length} project${list.length!==1?'s':''}`;
+  if (!list.length) { grid.innerHTML=''; no.style.display='block'; }
+  else { no.style.display='none'; grid.innerHTML=list.map(p=>renderCard(p,getLiked())).join(''); }
+}
+filter();
+</script>
+</body>
+</html>
