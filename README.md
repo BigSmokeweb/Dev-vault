@@ -29,9 +29,46 @@ devvault/
     └── data.js         ← Shared data, utilities & state
 ```
 
+---
+
+## 🚀 Deploy to Vercel (3 steps)
+
+### Option A — Drag & Drop (Easiest)
+1. Go to [vercel.com](https://vercel.com) and sign up / log in
+2. Click **"Add New Project"** → **"Deploy without Git"**
+3. Drag the entire `devvault` folder into the upload area
+4. Click **Deploy** — done! ✅
+
+### Option B — Via GitHub
+1. Push this folder to a GitHub repo
+2. Go to [vercel.com](https://vercel.com) → **New Project**
+3. Import your GitHub repo
+4. Leave all settings as default → Click **Deploy**
+
+---
+
+## 💻 Run Locally
+
+Open a terminal in the `devvault` folder and run:
+
+```bash
+# Python 3
+python -m http.server 8080
+
+# Node.js
+npx serve .
+```
+
+Then open **http://localhost:8080** in your browser.
+
+> ⚠️ Don't double-click the HTML files directly — use a local server  
+> because `sessionStorage` and relative JS imports need HTTP.
+
+---
+
 ## ✨ Features
 
-- 🔐 Login & Sign Up Page
+- 🔐 Fake login (stores name in sessionStorage)
 - 📤 Upload projects with drag & drop
 - 🔍 Search + filter by tech / difficulty
 - ♥ Like / unlike projects (persisted in session)

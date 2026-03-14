@@ -48,12 +48,14 @@
   <div class="tut-path-list" id="tutPath"></div>
 </div>
 <div id="footer"></div>
-<script src="js/data.js"></script>
-<script>
+<script type="module">
+import { onUser, renderNavbar, renderFooter, showToast, TEAM_DATA, BLOG_POSTS, TUTORIALS, TUT_PATH, FAQS } from "./js/data.js";
+renderFooter("footer");
+onUser(user => { renderNavbar("tutorials", user); });
 renderNavbar('tutorials');
 renderFooter('footer');
 document.getElementById('tutGrid').innerHTML=TUTORIALS.map(t=>`
-  <div class="tut-card" onclick="showToast('Starting: ${t.title}','info')">
+  <div class="tut-card" onclick="window.showToast('Starting: ${t.title}','info')">
     <div class="tut-card-header">
       <div class="tut-icon" style="background:${t.color}">${t.icon}</div>
       <div><div class="tut-card-title">${t.title}</div><div class="tut-card-level" style="color:${t.accent}">${t.level}</div></div>

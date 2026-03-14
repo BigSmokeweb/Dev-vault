@@ -87,7 +87,56 @@
 </div>
 <div id="footer"></div>
 
-<script src="js/data.js"></script>
+<script type="module">
+import { onUser, seedProjects, getProjects, renderNavbar, renderFooter,
+         buildMarquee, renderCard, showToast } from './js/data.js';
+
+let currentUser = null;
+
+onUser(async user => {
+  currentUser = user;
+  renderNavbar('home', user);
+  await seedProjects();
+  const projects = await getProjects();
+  const likedIds = new Set();
+
+  // categories count
+  const cats=[
+    {label:'All',emoji:'🗂️',tag:'all',count:projects.length},
+    {label:'HTML/CSS',emoji:'🎨',tag:'HTML',count:projects.filter(p=>p.tags.includes('HTML')).length},
+    {label:'JavaScript',emoji:'⚡',tag:'JavaScript',count:projects.filter(p=>p.tags.includes('JavaScript')).length},
+    {label:'Firebase',emoji:'🔥',tag:'Firebase',count:projects.filter(p=>p.tags.includes('Firebase')).length},
+    {label:'Canvas',emoji:'🖼️',tag:'Canvas',count:projects.filter(p=>p.tags.includes('Canvas')).length},
+    {label:'APIs',emoji:'🔌',tag:'API',count:projects.filter(p=>p.tags.includes('API')).length},
+    {label:'Beginner',emoji:'🟢',tag:'Beginner',count:projects.filter(p=>p.difficulty==='Beginner').length},
+  ];
+  document.getElementById('catStrip').innerHTML=cats.map(c=>
+    `<a class="cat-pill" href="explore.html?tag=${c.tag}"><span class="cat-emoji">${c.emoji}</span><span class="cat-label">${c.label}</span><span class="cat-count">${c.count}</span></a>`
+  ).join('');
+
+  // featured
+  const sorted = [...projects].sort((a,b)=>(b.likes||0)-(a.likes||0));
+  document.getElementById('featuredGrid').innerHTML = sorted.slice(0,3).map(p=>renderCard(p,likedIds)).join('');
+  document.getElementById('recentGrid').innerHTML   = projects.slice(0,4).map(p=>renderCard(p,likedIds)).join('');
+  document.getElementById('statCount').textContent  = projects.length;
+
+  // like handler
+  window._handleLike = async (btn, id) => {
+    if (!currentUser) { showToast('Sign in to like projects','error'); window.location.href='login.html'; return; }
+    const { toggleLikeDB } = await import('./js/data.js');
+    const nowLiked = await toggleLikeDB(id, currentUser.uid);
+    const lc = btn.querySelector('.lc');
+    const cur = parseInt(lc.textContent)||0;
+    lc.textContent = nowLiked ? cur+1 : Math.max(0,cur-1);
+    btn.innerHTML = `${nowLiked?'♥':'♡'} <span class="lc">${lc.textContent}</span>`;
+    btn.classList.toggle('liked', nowLiked);
+  };
+});
+
+buildMarquee('marquee');
+renderFooter('footer');
+
+</script>
 <script>
 renderNavbar('home');
 buildMarquee('marquee');

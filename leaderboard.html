@@ -37,12 +37,16 @@
 <div class="podium" id="podium"></div>
 <div class="lb-list" id="lbList"></div>
 <div id="footer"></div>
-<script src="js/data.js"></script>
-<script>
+<script type="module">
+import { onUser, getProjects, renderNavbar, renderFooter, COLORS } from './js/data.js';
+renderFooter('footer');
+onUser(async user => {
+renderNavbar('leaderboard', user);
+const projects = await getProjects();
 renderNavbar('leaderboard');
 renderFooter('footer');
 const map={};
-getProjects().forEach(p=>{if(!map[p.author])map[p.author]={name:p.author,likes:0,projects:0};map[p.author].likes+=p.likes;map[p.author].projects++;});
+projects.forEach(p=>{if(!map[p.author])map[p.author]={name:p.author,likes:0,projects:0};map[p.author].likes+=p.likes;map[p.author].projects++;});
 const sorted=Object.values(map).sort((a,b)=>b.likes-a.likes);
 const top3=sorted.slice(0,3);
 const order=[top3[1],top3[0],top3[2]];
@@ -63,6 +67,7 @@ document.getElementById('lbList').innerHTML=sorted.slice(3).map((p,i)=>{
   const avColor=COLORS[(i+3)%COLORS.length];
   const initials=p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
   return `<div class="lb-row"><div class="lb-pos">${i+4}</div><div class="lb-av" style="background:${avColor}">${initials}</div><div class="lb-info"><div class="lb-name">${p.name}</div><div class="lb-meta">${p.projects} project${p.projects>1?'s':''}</div></div><div class="lb-score">♥ ${p.likes}</div></div>`;}).join('');
+});
 </script>
 </body>
 </html>

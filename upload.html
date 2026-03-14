@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Upload Project — DevVault</title>
+<title>Upload — DevVault</title>
 <link rel="stylesheet" href="css/styles.css">
 <style>
 .upload-wrap{max-width:720px;margin:0 auto;padding:4rem 2rem;}
@@ -14,7 +14,6 @@
 .drop-icon{font-size:2.5rem;margin-bottom:.5rem;}
 .drop-text{font-size:.88rem;color:var(--ink3);}
 .drop-text span{color:var(--coral);font-weight:600;}
-.drop-hint{font-family:var(--font-mono);font-size:.68rem;color:var(--muted);margin-top:.3rem;}
 .progress-bar{background:var(--cream2);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.25rem;display:none;}
 .progress-bar.show{display:block;}
 .prog-head{display:flex;justify-content:space-between;font-size:.78rem;color:var(--ink3);margin-bottom:.5rem;}
@@ -23,24 +22,24 @@
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 .form-group{margin-bottom:1.1rem;}
 .form-full{grid-column:1/-1;}
-.auth-gate{text-align:center;padding:4rem 2rem;}
+.auth-gate{text-align:center;padding:5rem 2rem;}
 </style>
 </head>
 <body>
 <div class="toast-area" id="toastArea"></div>
 <nav class="navbar" id="mainNav"></nav>
 <div id="authGate" class="auth-gate" style="display:none">
-  <p style="font-size:1rem;color:var(--muted);margin-bottom:1.5rem">You need to be signed in to upload a project.</p>
+  <p style="font-size:1rem;color:var(--muted);margin-bottom:1.5rem">Sign in to upload a project.</p>
   <a class="btn-coral" href="login.html">Sign In →</a>
 </div>
-<div class="upload-wrap" id="uploadWrap">
+<div class="upload-wrap" id="uploadWrap" style="display:none">
   <h1 class="upload-title">Share a Project ✨</h1>
   <p class="upload-sub">// Inspire the next generation of builders</p>
   <div class="upload-card">
     <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
       <div class="drop-icon">📦</div>
-      <div class="drop-text">Drop your files or <span>browse to upload</span></div>
-      <div class="drop-hint">ZIP, HTML, CSS, JS — up to 50MB</div>
+      <div class="drop-text">Drop files or <span>browse to upload</span></div>
+      <div style="font-family:var(--font-mono);font-size:.68rem;color:var(--muted);margin-top:.3rem">ZIP, HTML, CSS, JS — up to 50MB</div>
       <input type="file" id="fileInput" style="display:none" onchange="handleFile(this)">
     </div>
     <div class="progress-bar" id="progBar">
@@ -50,43 +49,58 @@
     <div class="form-row">
       <div class="form-group form-full"><label class="field-label">Project Title *</label><input class="field-input" id="uTitle" placeholder="e.g. Weather Dashboard"></div>
       <div class="form-group form-full"><label class="field-label">Description</label><textarea class="field-input" id="uDesc" placeholder="What does it do? What can others learn?"></textarea></div>
-      <div class="form-group"><label class="field-label">Live Demo URL</label><input class="field-input" id="uLive" placeholder="https://myproject.netlify.app"></div>
-      <div class="form-group"><label class="field-label">GitHub URL</label><input class="field-input" id="uGithub" placeholder="https://github.com/you/repo"></div>
+      <div class="form-group"><label class="field-label">Live Demo URL</label><input class="field-input" id="uLive" placeholder="https://..."></div>
+      <div class="form-group"><label class="field-label">GitHub URL</label><input class="field-input" id="uGithub" placeholder="https://github.com/..."></div>
       <div class="form-group form-full"><label class="field-label">Tech Tags (comma separated)</label><input class="field-input" id="uTags" placeholder="HTML, CSS, JavaScript, Firebase"></div>
-      <div class="form-group form-full"><label class="field-label">Difficulty Level</label><select class="field-input" id="uDiff"><option value="Beginner">🟢 Beginner</option><option value="Intermediate" selected>🟡 Intermediate</option><option value="Advanced">🔴 Advanced</option></select></div>
+      <div class="form-group form-full"><label class="field-label">Difficulty</label>
+        <select class="field-input" id="uDiff"><option value="Beginner">🟢 Beginner</option><option value="Intermediate" selected>🟡 Intermediate</option><option value="Advanced">🔴 Advanced</option></select>
+      </div>
     </div>
-    <button class="btn-coral" style="width:100%;padding:.9rem;border-radius:var(--radius-sm);font-size:.95rem;justify-content:center;" onclick="submitProject()">🚀 Publish Project</button>
+    <button class="btn-coral" style="width:100%;padding:.9rem;border-radius:var(--radius-sm);font-size:.95rem;justify-content:center;" id="publishBtn">🚀 Publish Project</button>
   </div>
 </div>
 <div id="footer"></div>
-<script src="js/data.js"></script>
-<script>
-renderNavbar('');
+<script type="module">
+import { onUser, addProject, renderNavbar, renderFooter, showToast } from './js/data.js';
+let currentUser = null;
 renderFooter('footer');
-const user = getUser();
-if (!user) { document.getElementById('authGate').style.display='block'; document.getElementById('uploadWrap').style.display='none'; }
-
-const dz=document.getElementById('dropZone');
+onUser(user => {
+  currentUser = user;
+  renderNavbar('', user);
+  if (!user) { document.getElementById('authGate').style.display='block'; }
+  else { document.getElementById('uploadWrap').style.display='block'; }
+});
+const dz = document.getElementById('dropZone');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])simUpload(e.dataTransfer.files[0].name);});
 function handleFile(input){if(input.files[0])simUpload(input.files[0].name);}
+window.handleFile = handleFile;
 function simUpload(name){
   const pb=document.getElementById('progBar'),fill=document.getElementById('progFill'),pct=document.getElementById('progPct');
-  document.getElementById('progName').textContent=name; pb.classList.add('show'); let p=0;
+  document.getElementById('progName').textContent=name;pb.classList.add('show');let p=0;
   const iv=setInterval(()=>{p+=Math.random()*18;if(p>=100){p=100;clearInterval(iv);}fill.style.width=p+'%';pct.textContent=Math.round(p)+'%';},100);
 }
-function submitProject(){
-  if(!user){window.location.href='login.html';return;}
+document.getElementById('publishBtn').onclick = async () => {
+  if (!currentUser){window.location.href='login.html';return;}
   const title=document.getElementById('uTitle').value.trim();
-  if(!title){showToast('Project title is required!','error');return;}
+  if(!title){showToast('Title is required!','error');return;}
   const tags=(document.getElementById('uTags').value||'HTML,CSS,JS').split(',').map(t=>t.trim()).filter(Boolean).slice(0,4);
-  const imgs=['https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=300&fit=crop','https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&h=300&fit=crop','https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=300&fit=crop','https://images.unsplash.com/photo-1537884944318-390069bb8665?w=600&h=300&fit=crop'];
-  const newP={id:Date.now(),title,desc:document.getElementById('uDesc').value.trim()||`A project by ${user.name}.`,tags,author:user.name,likes:0,img:imgs[Math.floor(Math.random()*imgs.length)],difficulty:document.getElementById('uDiff').value};
-  addProject(newP);
-  showToast(`🚀 "${title}" is now live!`,'success');
-  setTimeout(()=>window.location.href='explore.html',1500);
-}
+  const imgs=['https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=300&fit=crop','https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&h=300&fit=crop','https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=300&fit=crop'];
+  document.getElementById('publishBtn').textContent='Publishing…';
+  try {
+    await addProject({
+      title, desc:document.getElementById('uDesc').value.trim()||`A project by ${currentUser.displayName}.`,
+      tags, authorId:currentUser.uid,
+      authorName:currentUser.displayName||currentUser.email,
+      liveUrl:document.getElementById('uLive').value.trim(),
+      githubUrl:document.getElementById('uGithub').value.trim(),
+      difficulty:document.getElementById('uDiff').value,
+      img:imgs[Math.floor(Math.random()*imgs.length)],
+    });
+    showToast(`🚀 "${title}" is now live!`,'success');
+    setTimeout(()=>window.location.href='explore.html',1500);
+  } catch(e) { showToast('Error: '+e.message,'error'); document.getElementById('publishBtn').textContent='🚀 Publish Project'; }
+};
 </script>
-</body>
-</html>
+</body></html>

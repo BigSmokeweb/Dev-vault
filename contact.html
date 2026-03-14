@@ -47,7 +47,7 @@
     <div class="form-group"><label class="field-label">Email</label><input class="field-input" placeholder="you@example.com" type="email"></div>
     <div class="form-group"><label class="field-label">Subject</label><select class="field-input"><option>General Question</option><option>Bug Report</option><option>Feature Request</option><option>Collaboration</option><option>Just saying hi! 👋</option></select></div>
     <div class="form-group"><label class="field-label">Message</label><textarea class="field-input" rows="5" placeholder="Type your message here..."></textarea></div>
-    <button class="form-submit" onclick="showToast('Message sent! We\'ll reply soon 📩','success')">Send Message →</button>
+    <button class="form-submit" onclick="window.showToast('Message sent! We\'ll reply soon 📩','success')">Send Message →</button>
   </div>
   <div>
     <div class="info-title">Contact the Team</div>
@@ -60,8 +60,10 @@
   </div>
 </div>
 <div id="footer"></div>
-<script src="js/data.js"></script>
-<script>
+<script type="module">
+import { onUser, renderNavbar, renderFooter, showToast, TEAM_DATA, BLOG_POSTS, TUTORIALS, TUT_PATH, FAQS } from "./js/data.js";
+renderFooter("footer");
+onUser(user => { renderNavbar("", user); });
 renderNavbar('');
 renderFooter('footer');
 document.getElementById('membersGrid').innerHTML=TEAM_DATA.map(m=>`

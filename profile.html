@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>My Profile — DevVault</title>
+<title>Profile — DevVault</title>
 <link rel="stylesheet" href="css/styles.css">
 <style>
 .profile-banner{background:linear-gradient(135deg,#fff5f0 0%,#fef3e2 50%,#f0f8ff 100%);border-bottom:1.5px solid var(--border);padding:3rem 2.5rem 0;max-width:1280px;margin:0 auto;}
@@ -10,12 +10,10 @@
 .profile-av{width:88px;height:88px;border-radius:50%;border:4px solid var(--white);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:white;flex-shrink:0;background:linear-gradient(135deg,#ff5c35,#f59e0b);}
 .profile-name{font-family:var(--font-display);font-size:2rem;font-weight:700;letter-spacing:-.5px;}
 .profile-handle{font-family:var(--font-mono);font-size:.78rem;color:var(--muted);margin-top:.2rem;}
-.profile-bio-text{font-size:.88rem;color:var(--ink3);margin-top:.5rem;}
 .profile-actions{margin-left:auto;display:flex;gap:.5rem;padding-bottom:.5rem;}
 .profile-tabs{display:flex;padding-top:1rem;}
 .ptab{padding:.7rem 1.5rem;font-size:.875rem;font-weight:600;color:var(--ink3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .18s;font-family:var(--font-body);}
-.ptab:hover{color:var(--ink);}
-.ptab.active{color:var(--coral);border-bottom-color:var(--coral);}
+.ptab:hover{color:var(--ink);}.ptab.active{color:var(--coral);border-bottom-color:var(--coral);}
 .profile-content{padding:2rem 2.5rem;max-width:1280px;margin:0 auto;}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem;}
 .pstat{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;box-shadow:var(--shadow-sm);}
@@ -31,17 +29,17 @@
   <p style="font-size:1rem;color:var(--muted);margin-bottom:1.5rem">Sign in to view your profile.</p>
   <a class="btn-coral" href="login.html">Sign In →</a>
 </div>
-<div id="profileWrap">
+<div id="profileWrap" style="display:none">
   <div class="profile-banner">
     <div class="profile-top">
       <div class="profile-av" id="profAv"></div>
-      <div><div class="profile-name" id="profName"></div><div class="profile-handle" id="profHandle"></div><div class="profile-bio-text">Building cool things, one project at a time. 🚀</div></div>
-      <div class="profile-actions"><a class="btn-outline" href="upload.html">+ New Project</a><button class="btn-coral" onclick="doLogout()">Sign Out</button></div>
+      <div><div class="profile-name" id="profName"></div><div class="profile-handle" id="profHandle"></div><div style="font-size:.88rem;color:var(--ink3);margin-top:.5rem">Building cool things, one project at a time. 🚀</div></div>
+      <div class="profile-actions"><a class="btn-outline" href="upload.html">+ New Project</a><button class="btn-coral" onclick="window._logout&&window._logout()">Sign Out</button></div>
     </div>
     <div class="profile-tabs">
       <button class="ptab active" onclick="switchTab(this,'tabMine')">My Projects</button>
-      <button class="ptab" onclick="switchTab(this,'tabLiked')">Liked</button>
-      <button class="ptab" onclick="switchTab(this,'tabStats')">Stats</button>
+      <button class="ptab"        onclick="switchTab(this,'tabLiked')">Liked</button>
+      <button class="ptab"        onclick="switchTab(this,'tabStats')">Stats</button>
     </div>
   </div>
   <div class="profile-content">
@@ -51,29 +49,30 @@
   </div>
 </div>
 <div id="footer"></div>
-<script src="js/data.js"></script>
-<script>
-renderNavbar('');
+<script type="module">
+import { onUser, doSignOut, getUserProjects, getProjects, renderNavbar, renderFooter, renderCard } from './js/data.js';
 renderFooter('footer');
-const user = getUser();
-if (!user) { document.getElementById('authGate').style.display='block'; document.getElementById('profileWrap').style.display='none'; }
-else {
-  document.getElementById('profAv').textContent = user.initial;
-  document.getElementById('profName').textContent = user.name;
-  document.getElementById('profHandle').textContent = '// @'+user.name.toLowerCase().replace(/\s+/g,'.')+'  · joined today';
-  const mine = getProjects().filter(p=>p.author===user.name);
-  const liked = getLiked();
-  const likedProjects = getProjects().filter(p=>liked.has(p.id));
-  if (!mine.length) { document.getElementById('noMine').style.display='block'; }
-  else { document.getElementById('myGrid').innerHTML=mine.map(p=>renderCard(p,liked)).join(''); }
-  document.getElementById('likedGrid').innerHTML=likedProjects.length?likedProjects.map(p=>renderCard(p,liked)).join(''):'<p style="padding:3rem;text-align:center;color:var(--muted);font-family:var(--font-mono)">// No liked projects yet.</p>';
-  const tl=mine.reduce((s,p)=>s+p.likes,0);
-  document.getElementById('statsRow').innerHTML=[{n:mine.length,l:'Projects'},{n:tl,l:'Total Likes'},{n:liked.size,l:'Liked'},{n:Math.floor(tl*2.1),l:'Downloads'}].map(s=>`<div class="pstat"><div class="pstat-n">${s.n}</div><div class="pstat-l">${s.l}</div></div>`).join('');
-}
-function switchTab(btn,tabId){
-  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
-  ['tabMine','tabLiked','tabStats'].forEach(id=>document.getElementById(id).style.display=id===tabId?'block':'none');
-}
+onUser(async user => {
+  renderNavbar('', user);
+  if (!user) { document.getElementById('authGate').style.display='block'; return; }
+  document.getElementById('profileWrap').style.display='block';
+  document.getElementById('profAv').textContent=(user.displayName||user.email||'U')[0].toUpperCase();
+  document.getElementById('profName').textContent=user.displayName||user.email;
+  document.getElementById('profHandle').textContent='// @'+(user.displayName||'dev').toLowerCase().replace(/\s+/g,'.')+ ' · Firebase UID: '+user.uid.slice(0,8)+'…';
+  const mine = await getUserProjects(user.uid);
+  const all  = await getProjects();
+  const likedIds = new Set(all.filter(p=>(p.likedBy||[]).includes(user.uid)).map(p=>p.id));
+  const likedProjects = all.filter(p=>likedIds.has(p.id));
+  if (!mine.length){document.getElementById('noMine').style.display='block';}
+  else {document.getElementById('myGrid').innerHTML=mine.map(p=>renderCard(p,likedIds)).join('');}
+  document.getElementById('likedGrid').innerHTML=likedProjects.length?likedProjects.map(p=>renderCard(p,likedIds)).join(''):'<p style="padding:3rem;text-align:center;color:var(--muted);font-family:var(--font-mono)">// No liked projects yet.</p>';
+  const tl=mine.reduce((s,p)=>s+(p.likes||0),0);
+  document.getElementById('statsRow').innerHTML=[{n:mine.length,l:'Projects'},{n:tl,l:'Total Likes'},{n:likedIds.size,l:'Liked'},{n:Math.floor(tl*2.1),l:'Downloads'}].map(s=>`<div class="pstat"><div class="pstat-n">${s.n}</div><div class="pstat-l">${s.l}</div></div>`).join('');
+});
+window._logout = doSignOut;
+window.switchTab = (btn,tab) => {
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active')); btn.classList.add('active');
+  ['tabMine','tabLiked','tabStats'].forEach(id=>document.getElementById(id).style.display=id===tab?'block':'none');
+};
 </script>
-</body>
-</html>
+</body></html>
